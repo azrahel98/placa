@@ -14,6 +14,8 @@ __pycache__/
 # C extensions
 *.so
 pyvenv.cfg
+./pyvenv.cfg
+pyvenv.cfg/
 # Distribution / packaging
 .Python
 build/
