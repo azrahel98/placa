@@ -23,6 +23,10 @@ develop-eggs/
 dist/
 downloads/
 eggs/
+Scripts/
+Library/
+Share/
+share/
 .eggs/
 lib/
 lib64/

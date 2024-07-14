@@ -3,3 +3,15 @@ GET http://127.0.0.1:5000/test
 ###
 
 POST http://127.0.0.1:5000/login
+
+
+####
+POST http://127.0.0.1:5000/check
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="foto.jpg"
+Content-Type: image/png
+
+< ./8-enero.png
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
