@@ -18,6 +18,13 @@ class Database:
             collation='utf8mb4_unicode_ci'
         )
 
+    def guardar_fotos(self,img):
+        con = self.get_connection()
+        curs = con.cursor()
+        curs.execute("insert into Placa(placa) values(%s)",(img,))
+        con.commit()
+        self.close_connection(con)
+    
     def get_connection(self):
         return self.cnxpool.get_connection()
 

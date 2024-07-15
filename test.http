@@ -1,13 +1,18 @@
 GET http://127.0.0.1:5000/test
 
 ###
-
 POST http://127.0.0.1:5000/login
+Content-Type: application/json
 
+{
+    "username": "+++cl",
+    "password": "++"
+}
 
 ####
 POST http://127.0.0.1:5000/check
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Bearer: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJleHAiOjE3MjExMDE5NDl9.EXL6nCIHoS9nFxdskxeX3R6Ol_nOEVFRwn-dAUjXvX0
 
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="file"; filename="foto.jpg"

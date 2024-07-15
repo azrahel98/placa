@@ -1,29 +1,40 @@
 from flask import Flask, request, jsonify
-from db import Database 
-import os
+from db import Database
 from placa import verificar
-import io
-import numpy as np
-import cv2
+from jsonwebtoken import generate_jwt,token_required
 
 app = Flask(__name__)
+app.config['DEBUG'] = True 
 
 db = Database()
 
 
 @app.route('/login',methods=["POST"])
 def login():
+    data = request.get_json()
+    username = data.get('username')
+    passw = data.get('password')
+    if username == None or passw == None:
+         return jsonify({'message': 'Campos incorrectos'}), 400
     con = db.get_connection()
     curs = con.cursor()
-    curs.execute("Select nickname from Usuario")
+    curs.execute("select id,cast(aes_decrypt(pass,'olafmves') as char) pass from Usuario where nickname = %s",(username,))
     res = curs.fetchall()
     db.close_connection(con)
-    db.query("select * from Usuario")
-    return jsonify(res)
+    
+    if len(res) <1:
+        return jsonify({'message': 'Usuario no existe'}), 400
+    
+    if passw != res[0][1]:
+        return jsonify({'message': 'Password Incorrecta'}), 400
+    token = generate_jwt(res[0][0])
+    
+    return jsonify({'token':token})
 
 
 @app.route('/check',methods=['POST'])
-def check():
+@token_required
+def check(current_user):
     if 'file' not in request.files:
         return jsonify({'error': 'No file part'}), 400
 
@@ -32,19 +43,17 @@ def check():
     if file.filename == '':
         return jsonify({'error': 'No selected file'}), 400
 
-    verificar(file)
+    resultado = verificar(file)
+    
+    for x in resultado:
+        con = db.guardar_fotos(x['placa'])
 
-    return jsonify({'message': 'File uploaded successfully'}), 200
+    return jsonify(resultado), 200
 
 
-@app.route('/test', methods=['GET'])
-def test_connection():
-    connection = db.get_connection()
-    cursor = connection.cursor()
-    cursor.execute("SELECT * FROM Placas")
-    results = cursor.fetchall()
-    db.close_connection(connection)
-    return jsonify(results)
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

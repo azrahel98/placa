@@ -1,7 +1,9 @@
+import base64
 import cv2
 from ultralytics import YOLO
 import io
 import numpy as np
+import zlib
 
 
 def verificar(img):
@@ -12,21 +14,29 @@ def verificar(img):
     
     results = model(frame,device="cpu")
     
-    placa_count = 0
+    
+    detectados = []
     
     for result in results:
         for box in result.boxes:
             x1, y1, x2, y2 = map(int, box.xyxy[0])
            
-            plate_filename = f'./folder/plate_{placa_count}.jpg'
             conf = float(box.conf[0])
             cls = box.cls[0]
             label = f'{result.names[int(cls)]} {conf:.2f}'
             
             if conf > 0.56:
-                cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 0, 0), 2)
-                cv2.putText(frame, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+                _, buffer = cv2.imencode('.jpg', frame[y1:y2, x1:x2])
+                plate_string = base64.b64encode(buffer).decode('utf-8')
 
-                cv2.imwrite(plate_filename,frame[y1:y2, x1:x2])
-            
+                detectados.append({
+                    'label':label,
+                    'confianza':conf,
+                    'placa':plate_string
+                })
     cv2.destroyAllWindows()
+    return detectados      
+    
+    
+    
+    
