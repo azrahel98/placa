@@ -3,7 +3,6 @@ import cv2
 from ultralytics import YOLO
 import io
 import numpy as np
-import zlib
 
 
 def verificar(img):

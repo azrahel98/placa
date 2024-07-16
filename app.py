@@ -1,11 +1,12 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from db import Database
 from placa import verificar
 from jsonwebtoken import generate_jwt,token_required
 
 app = Flask(__name__)
 app.config['DEBUG'] = True 
-
+CORS(app) 
 db = Database()
 
 
@@ -44,11 +45,22 @@ def check(current_user):
         return jsonify({'error': 'No selected file'}), 400
 
     resultado = verificar(file)
-    
     for x in resultado:
-        con = db.guardar_fotos(x['placa'])
+        db.guardar_fotos(x['placa'],current_user)
 
     return jsonify(resultado), 200
+
+@app.route('/images',methods=['get'])
+@token_required
+def images(current_user):
+    con = db.get_connection()
+    curs = con.cursor()
+    curs.execute("select placa from Placa where user = %s",(current_user,))
+    res = curs.fetchall()
+    db.close_connection(con)
+
+    
+    return jsonify(res)
 
 
 

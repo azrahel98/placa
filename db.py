@@ -14,14 +14,15 @@ class Database:
             user=os.environ['DB_USERNAME'],
             password=os.environ['DB_PASSWORD'],
             host=os.environ['DB_HOST'],
+            port=os.environ['DB_PORT'],
             database=os.environ['DB_NAME'],
             collation='utf8mb4_unicode_ci'
         )
 
-    def guardar_fotos(self,img):
+    def guardar_fotos(self,img,currentuser):
         con = self.get_connection()
         curs = con.cursor()
-        curs.execute("insert into Placa(placa) values(%s)",(img,))
+        curs.execute("insert into Placa(placa,user) values(%s,%s)",(img,currentuser))
         con.commit()
         self.close_connection(con)
     
