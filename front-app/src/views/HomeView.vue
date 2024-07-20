@@ -36,15 +36,11 @@
 				}
 			})
 			images.value = res.data
-		}   catch (error) {
-    console.error('Error detallado:', error)
-    if ((error as any).response) {
-      console.error('Respuesta del servidor:', (error as any).response.data)
-      console.error('Estado HTTP:', (error as any).response.status)
-    }
+		} catch (error) {
+			console.log(error)
+		}
 		loading.value = false
 	}
-}
 </script>
 
 <template>
